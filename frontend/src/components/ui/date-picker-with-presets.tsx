@@ -45,12 +45,16 @@ export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
         align="start"
         className="flex w-[280px] flex-col space-y-2"
       >
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 justify-between">
           <div className="">
             <Select
               onValueChange={(value) => {
-                const newDate = addDays(new Date(), parseInt(value));
-                onChange(newDate);
+                if (value === "clear") {
+                  onChange(undefined);
+                } else {
+                  const newDate = addDays(new Date(), parseInt(value));
+                  onChange(newDate);
+                }
               }}
             >
               <SelectTrigger>
@@ -61,6 +65,7 @@ export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
                 <SelectItem value="1">Tomorrow</SelectItem>
                 <SelectItem value="3">In 3 days</SelectItem>
                 <SelectItem value="7">In a week</SelectItem>
+                <SelectItem value="clear" className="text-red-500">Clear date</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -73,8 +78,23 @@ export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
         </div>
 
         <div className="rounded-md border">
-          <Calendar mode="single" selected={date} onSelect={onChange} />
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={onChange}
+            initialFocus
+          />
         </div>
+        {date && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+            onClick={() => onChange(undefined)}
+          >
+            Clear date
+          </Button>
+        )}
       </PopoverContent>
     </Popover>
   );

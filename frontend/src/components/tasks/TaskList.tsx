@@ -5,6 +5,7 @@ import supabase from "@/lib/supabaseClient";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function TaskList({
   filter,
@@ -126,21 +127,32 @@ export default function TaskList({
       ) : filteredTasks.length === 0 ? (
         <p className="text-sm text-muted-foreground">No tasks to show.</p>
       ) : (
-        filteredTasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            id={task.id}
-            initialTitle={task.title}
-            initialDescription={task.description}
-            initialDueDate={task.due_date}
-            isComplete={task.is_complete}
-            onSave={({ title, description, due_date, is_complete }) =>
-              updateTask(task.id, { title, description, due_date, is_complete })
-            }
-            onDelete={() => handleDelete(task.id)}
-          />
-        ))
+        <AnimatePresence>
+          {filteredTasks.map((task) => (
+            <motion.div
+              key={task.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <TaskItem
+                id={task.id}
+                initialTitle={task.title}
+                initialDescription={task.description}
+                initialDueDate={task.due_date}
+                isComplete={task.is_complete}
+                onSave={({ title, description, due_date, is_complete }) =>
+                  updateTask(task.id, { title, description, due_date, is_complete })
+                }
+                onDelete={() => handleDelete(task.id)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       )}
+
     </div>
+
   );
 }

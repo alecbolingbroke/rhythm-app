@@ -91,15 +91,21 @@ export default function TaskItem({
     const localDate = new Date(dateStr);
     localDate.setHours(hours, minutes, 0, 0);
 
-    return new Date(
-      localDate.getTime() - localDate.getTimezoneOffset() * 60000
-    ).toISOString();
+    // Convert to UTC date
+    const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+
+    // Format date without seconds
+    // YYYY-MM-DDThh:mm:00.000Z format
+    const isoString = utcDate.toISOString();
+    return isoString.substring(0, 17) + '00.000Z';
   }
 
-  const fullDueDate =
-    currentDueDate && currentTime
+  // Calculate the full due date, or empty string if not set
+  // Backend will convert empty string to null
+  const fullDueDate: string =
+    currentDueDate && currentDueDate.trim() !== "" && currentTime
       ? createUTCDateFromLocal(currentDueDate, currentTime)
-      : currentDueDate;
+      : currentDueDate && currentDueDate.trim() !== "" ? currentDueDate : "";
 
   const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && currentTitle.trim()) {
@@ -118,23 +124,61 @@ export default function TaskItem({
     }
   };
 
+  // Animation variants for task completion
+  // Check if dark mode is active
+  const isDarkMode = typeof window !== 'undefined' &&
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  // Animation variants for task completion
+  const taskVariants = {
+    incomplete: {
+      backgroundColor: "transparent",
+      borderLeft: "0px solid transparent",
+      transition: { duration: 0.3 }
+    },
+    complete: {
+      backgroundColor: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+      borderLeft: "4px solid #10b981", // Green border for completed tasks
+      transition: { duration: 0.3 }
+    },
+    hover: {
+      backgroundColor: isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.02)",
+      transition: { duration: 0.2 }
+    }
+  };
+
   return (
-    <div className="group flex flex-col p-2 border-b dark:border-zinc-800">
+    <motion.div
+      className="group flex flex-col p-2 border-b dark:border-zinc-800 rounded-md overflow-hidden relative"
+      initial={complete ? "complete" : "incomplete"}
+      animate={complete ? "complete" : "incomplete"}
+      whileHover="hover"
+      variants={taskVariants}
+      layout
+    >
       {/* Row 1: Checkbox, Title, Delete */}
       <div className="flex items-center gap-3">
-        <Checkbox
-          checked={complete}
-          onCheckedChange={(checked) => {
-            setComplete(Boolean(checked));
-            onSave({
-              title: currentTitle,
-              description: currentDescription,
-              due_date: fullDueDate,
-              is_complete: Boolean(checked),
-            });
-          }}
-        />
-        <input
+        <motion.div
+          whileTap={{ scale: isNew ? 1 : 0.9 }}
+          animate={{ scale: complete ? [1, 1.2, 1] : 1, opacity: isNew ? 0.5 : 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Checkbox
+            checked={complete}
+            disabled={isNew}
+            onCheckedChange={(checked) => {
+              if (isNew) return; // Extra safety check
+              setComplete(Boolean(checked));
+              onSave({
+                title: currentTitle,
+                description: currentDescription,
+                due_date: fullDueDate,
+                is_complete: Boolean(checked),
+              });
+            }}
+          />
+        </motion.div>
+        <motion.input
           className={cn(
             "bg-transparent border-none outline-none text-base w-full",
             complete && "line-through text-muted-foreground"
@@ -143,11 +187,16 @@ export default function TaskItem({
           onChange={(e) => setCurrentTitle(e.target.value)}
           onKeyDown={handleEnter}
           placeholder="Start typing your task..."
+          animate={{
+            scale: complete ? 0.98 : 1,
+            opacity: complete ? 0.8 : 1
+          }}
+          transition={{ duration: 0.3 }}
         />
         {onDelete && (
           <button
             onClick={onDelete}
-            className="opacity-0 group-hover:opacity-100 transition-all p-1 rounded 
+            className="opacity-0 group-hover:opacity-100 transition-all p-1 rounded
                      bg-white group-hover:bg-white hover:bg-red-500"
           >
             <Trash2
@@ -178,7 +227,10 @@ export default function TaskItem({
             <DatePickerWithPresets
               date={currentDueDate ? new Date(currentDueDate) : undefined}
               onChange={(newDate) => {
-                if (!newDate) return;
+                if (!newDate) {
+                  setCurrentDueDate(""); // Set to empty string when cleared
+                  return;
+                }
                 setCurrentDueDate(newDate.toISOString());
               }}
               time={currentTime}
@@ -187,6 +239,6 @@ export default function TaskItem({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

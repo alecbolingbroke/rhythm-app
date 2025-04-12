@@ -1,23 +1,31 @@
-import { useState, useEffect } from "react"
-import TaskList from "@/components/tasks/TaskList"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import TaskList from "@/components/tasks/TaskList";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export default function Dashboard() {
-  const [showWelcome, setShowWelcome] = useState(false)
-  const [filter, setFilter] = useState<"pending" | "completed" | "all">("pending")
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [filter, setFilter] = useState<"pending" | "completed" | "all">(
+    "pending"
+  );
 
   useEffect(() => {
-    const hasSeenWelcome = localStorage.getItem("hasSeenWelcome")
+    const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
     if (!hasSeenWelcome) {
-      setShowWelcome(true)
+      setShowWelcome(true);
       const timer = setTimeout(() => {
-        setShowWelcome(false)
-        localStorage.setItem("hasSeenWelcome", "true")
-      }, 1000)
-      return () => clearTimeout(timer)
+        setShowWelcome(false);
+        localStorage.setItem("hasSeenWelcome", "true");
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [])
+  }, []);
 
   return (
     <div className="w-full max-w-2xl py-8 px-4 space-y-6">
@@ -32,7 +40,9 @@ export default function Dashboard() {
             className="text-center"
           >
             <h1 className="text-2xl font-bold">Welcome to Rhythm 🥁</h1>
-            <p className="text-muted-foreground">You’re logged in and ready to build.</p>
+            <p className="text-muted-foreground">
+              You’re logged in and ready to build.
+            </p>
           </motion.div>
         ) : (
           <motion.div
@@ -45,9 +55,19 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold">Your Tasks</h1>
               <div className="flex gap-2">
-                <Button variant={filter === "pending" ? "default" : "outline"} onClick={() => setFilter("pending")}>Pending</Button>
-                <Button variant={filter === "completed" ? "default" : "outline"} onClick={() => setFilter("completed")}>Completed</Button>
-                <Button variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>All</Button>
+                <Select
+                  onValueChange={(value) => setFilter(value as typeof filter)}
+                  value={filter}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter tasks" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <TaskList filter={filter} />
@@ -55,5 +75,5 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

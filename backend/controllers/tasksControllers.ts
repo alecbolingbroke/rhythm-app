@@ -38,12 +38,15 @@ export const createTask = async (
     return;
   }
 
+  // Convert empty string due_date to null
+  const formattedDueDate = due_date === "" ? null : due_date;
+
   const { data, error } = await supabase
     .from("tasks")
     .insert({
       title,
       description,
-      due_date,
+      due_date: formattedDueDate,
       user_id: user.sub,
     })
     .select()
@@ -71,9 +74,12 @@ export const updateTask = async (
   const { id } = req.params;
   const { title, description, is_complete, due_date } = req.body;
 
+  // Convert empty string due_date to null
+  const formattedDueDate = due_date === "" ? null : due_date;
+
   const { data, error } = await supabase
     .from("tasks")
-    .update({ title, description, is_complete, due_date })
+    .update({ title, description, is_complete, due_date: formattedDueDate })
     .eq("id", id)
     .eq("user_id", user.sub)
     .select()
