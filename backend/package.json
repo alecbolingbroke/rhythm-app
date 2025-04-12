@@ -2,9 +2,10 @@
 	"name": "backend",
 	"version": "1.0.0",
 	"scripts": {
+		"watch": "tsc -w",
 		"build": "tsc",
 		"start": "node dist/server.js",
-		"dev": "nodemon server.ts"
+		"dev": "nodemon dist/server.js"
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.49.4",
@@ -12,8 +13,7 @@
 		"dotenv": "^16.4.7",
 		"express": "^5.1.0",
 		"jsonwebtoken": "^9.0.2",
-		"postgres": "^3.4.5",
-		"typescript": "^5.8.3"
+		"postgres": "^3.4.5"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.17",
@@ -21,6 +21,9 @@
 		"@types/jsonwebtoken": "^9.0.9",
 		"@types/node": "^22.14.0",
 		"nodemon": "^3.1.9",
-		"ts-node": "^10.9.2"
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.3"
+
+		
 	}
 }
