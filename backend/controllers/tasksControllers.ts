@@ -31,7 +31,7 @@ export const createTask = async (
 
   const supabase = createSupabaseClientWithAuth(accessToken);
 
-  const { title, description } = req.body;
+  const { title, description, due_date } = req.body;
 
   if (!title) {
     res.status(400).json({ error: "Title is required" });
@@ -43,6 +43,7 @@ export const createTask = async (
     .insert({
       title,
       description,
+      due_date,
       user_id: user.sub,
     })
     .select()
@@ -68,11 +69,11 @@ export const updateTask = async (
   const supabase = createSupabaseClientWithAuth(accessToken);
 
   const { id } = req.params;
-  const { title, description, is_complete } = req.body;
+  const { title, description, is_complete, due_date } = req.body;
 
   const { data, error } = await supabase
     .from("tasks")
-    .update({ title, description, is_complete })
+    .update({ title, description, is_complete, due_date })
     .eq("id", id)
     .eq("user_id", user.sub)
     .select()

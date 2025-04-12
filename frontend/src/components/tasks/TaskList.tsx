@@ -6,12 +6,22 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 
-export default function TaskList() {
+export default function TaskList({
+  filter,
+}: {
+  filter: "pending" | "completed" | "all";
+}) {
   const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "all") return true;
+    if (filter === "pending") return !task.is_complete;
+    if (filter === "completed") return task.is_complete;
+  });
 
   const handleCreate = async () => {
     if (!newTaskText.trim()) return;
@@ -35,7 +45,9 @@ export default function TaskList() {
     });
 
     if (error) {
-      toast.error("Task creation failed", { description: error.message });
+      toast.error("Task creation failed", {
+        description: (error as Error).message || "Unknown error",
+      });
     } else {
       toast.success("Task created");
       setNewTaskText("");
@@ -49,7 +61,9 @@ export default function TaskList() {
     const { error } = await deleteTask(id);
 
     if (error) {
-      toast.error("Delete failed", { description: error.message });
+      toast.error("Delete failed", {
+        description: (error as Error).message || "Unknown error",
+      });
     } else {
       toast.success("Task deleted");
     }
@@ -91,7 +105,7 @@ export default function TaskList() {
 
               if (error) {
                 toast.error("Task creation failed", {
-                  description: error.message,
+                  description: (error as Error).message || "Unknown error",
                 });
               } else {
                 toast.success("Task created");
@@ -109,17 +123,19 @@ export default function TaskList() {
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading tasks...</p>
-      ) : tasks.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No tasks yet.</p>
+      ) : filteredTasks.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No tasks to show.</p>
       ) : (
-        tasks.map((task) => (
+        filteredTasks.map((task) => (
           <TaskItem
             key={task.id}
             id={task.id}
             initialTitle={task.title}
+            initialDescription={task.description}
+            initialDueDate={task.due_date}
             isComplete={task.is_complete}
-            onSave={({ title, is_complete }) =>
-              updateTask(task.id, { title, is_complete })
+            onSave={({ title, description, due_date, is_complete }) =>
+              updateTask(task.id, { title, description, due_date, is_complete })
             }
             onDelete={() => handleDelete(task.id)}
           />

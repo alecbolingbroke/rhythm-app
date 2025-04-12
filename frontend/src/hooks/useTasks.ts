@@ -56,6 +56,7 @@ export function useTasks() {
     is_complete: boolean;
     description?: string;
     due_date?: string;
+    user_id?: string;
   }) => {
     try {
       const data = await apiRequest("/api/tasks", {
