@@ -9,7 +9,7 @@ export default function LandingPage() {
       <h1 className="text-6xl font-bold mb-4">🏃‍♂️</h1>
       <h1 className="text-4xl font-bold mb-4">Welcome to Rhythm</h1>
       <p className="text-lg mb-6">
-        A clean, rhythm-based way to manage your tasks and stay on pace.
+        A clean way to manage your tasks and stay on pace.
       </p>
       <Button onClick={() => navigate("/auth")}>Get Started</Button>
     </div>

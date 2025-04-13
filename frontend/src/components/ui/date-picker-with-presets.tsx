@@ -17,15 +17,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TimePicker } from "@/components/ui/timepicker/time-picker";
+import { Period } from "./timepicker/time-picker-utils";
 
 type Props = {
   date?: Date;
   onChange: (date: Date | undefined) => void;
   time?: string;
   onTimeChange?: (time: string) => void;
+  period?: Period;
+  onPeriodChange: (period: Period) => void;
 };
 
-export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
+export function DatePickerWithPresets({ date, onChange, time, onTimeChange, period, onPeriodChange }: Props) {
 
   return (
     <Popover>
@@ -33,17 +36,18 @@ export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal bg-transparent border-0 px-2 py-1.5",
             !date && "text-muted-foreground"
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a due date</span>}
+          {date ? format(date, "PPP 'at' h:mm a") : <span>Pick a due date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent
         align="start"
         className="flex w-[280px] flex-col space-y-2"
+        data-ignore-outside-click
       >
         <div className="flex flex-row gap-2 justify-between">
           <div className="">
@@ -72,7 +76,7 @@ export function DatePickerWithPresets({ date, onChange, onTimeChange }: Props) {
 
           {onTimeChange && (
             <div className="flex items-center justify-between w-full max-w-[280px] gap-1">
-              <TimePicker date={date} setDate={onChange} />
+              <TimePicker date={date} setDate={onChange} initialTime={time} period={period} onPeriodChange={onPeriodChange} />
             </div>
           )}
         </div>

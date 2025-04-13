@@ -103,5 +103,68 @@ export function useTasks() {
     }
   };
 
-  return { tasks, loading, createTask, updateTask, deleteTask };
+  // Bulk update tasks (mark multiple as complete/incomplete)
+  const bulkUpdateTasks = async (
+    ids: string[],
+    updates: {
+      is_complete?: boolean;
+    }
+  ) => {
+    try {
+      // Create an array of promises for each update
+      const updatePromises = ids.map(id =>
+        apiRequest(`/api/tasks/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify(updates),
+        })
+      );
+
+      // Wait for all updates to complete
+      const results = await Promise.all(updatePromises);
+
+      // Update local state
+      setTasks(prev =>
+        prev.map(task => {
+          if (ids.includes(task.id)) {
+            return { ...task, ...updates };
+          }
+          return task;
+        })
+      );
+
+      return { data: results };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  // Bulk delete tasks
+  const bulkDeleteTasks = async (ids: string[]) => {
+    try {
+      // Create an array of promises for each delete
+      const deletePromises = ids.map(id =>
+        apiRequest(`/api/tasks/${id}`, { method: "DELETE" })
+      );
+
+      // Wait for all deletes to complete
+      await Promise.all(deletePromises);
+
+      // Update local state
+      setTasks(prev => prev.filter(task => !ids.includes(task.id)));
+
+      return {};
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  return {
+    tasks,
+    loading,
+    createTask,
+    updateTask,
+    deleteTask,
+    bulkUpdateTasks,
+    bulkDeleteTasks
+  };
 }

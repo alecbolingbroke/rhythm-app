@@ -8,9 +8,9 @@ export default function AuthPage() {
           {/* insert running emoji */}
           <h1 className="text-6xl font-bold">🏃‍♂️</h1>
           <h1 className="text-3xl font-bold">Sign in to Rhythm</h1>
-          <p className="text-sm text-muted-foreground">
+          {/* <p className="text-sm text-muted-foreground">
             Keep your life on pace — one task at a time.
-          </p>
+          </p> */}
         </div>
         <AuthForm />
         <p className="text-center text-sm mt-6">

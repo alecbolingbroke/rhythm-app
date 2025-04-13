@@ -32,7 +32,7 @@ export default function AuthForm() {
     if (error) {
       toast.error("Login failed", { description: error.message });
     } else {
-      toast.success("You're logged in!", { description: "Welcome back!" });
+      toast.success("You're logged in!");
       navigate("/");
     }
 
