@@ -6,23 +6,32 @@ import cors from "cors";
 import tasksRoutes from "./routes/tasksRoutes";
 import assistantRoutes from "./routes/assistantRoutes";
 import { authMiddleware } from "./middleware/authMiddleware";
-import { corsHeaders } from "./lib/cors";
 
 const app = express();
 
+// Update CORS configuration to handle multiple origins
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://rhythm-frontend.web.app', 
+  'http://localhost:5173',
+  process.env.SUPABASE_URL,
+  'https://msuyynkmwhxxnwilpope.supabase.co'          
+].filter(Boolean);
+
 app.use(cors({
   origin: (origin, callback) => {
-    callback(null, true); // Allow all origins
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: corsHeaders["Access-Control-Allow-Headers"].split(", "),
   credentials: true,
   optionsSuccessStatus: 200
 }));
-
-app.options("*", (req, res) => {
-  res.set(corsHeaders).status(200).send();
-});
 
 app.use(express.json());
 
