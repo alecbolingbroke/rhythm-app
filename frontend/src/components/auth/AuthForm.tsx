@@ -12,13 +12,15 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   const { session } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (session) {
-      navigate("/dashboard");
+      navigate("/tasks");
     }
   }, [session, navigate]);
 
@@ -41,7 +43,15 @@ export default function AuthForm() {
 
   const handleSignup = async () => {
     setSignupLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
+    });
 
     if (error) {
       toast.error("Signup failed", { description: error.message });
@@ -55,43 +65,76 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 space-y-6 border rounded-lg shadow-lg bg-white dark:bg-zinc-900">
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isSigningUp) {
+          handleSignup();
+        } else {
+          handleLogin();
+        }
+      }}
+      className="max-w-md mx-auto p-6 space-y-6 border rounded-lg shadow-lg bg-white dark:bg-zinc-900"
+    >
+      {" "}
+      <div className="space-y-4">
+        {isSigningUp && (
+          <div className="space-y-1">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+        )}
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+        <div className="space-y-1">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-      <div
-        className="flex justify-center space-x-2"
-      >
-        <Button onClick={handleLogin} disabled={loginLoading}>
-          {loginLoading ? "Signing in..." : "Sign In"}
-        </Button>
+        <div className="space-y-1">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col items-center space-y-2">
         <Button
-          variant="outline"
-          onClick={handleSignup}
-          disabled={signupLoading}
+          onClick={isSigningUp ? handleSignup : handleLogin}
+          disabled={loginLoading || signupLoading}
         >
-          {signupLoading ? "Signing up..." : "Sign Up"}
+          {loginLoading || signupLoading
+            ? "Loading..."
+            : isSigningUp
+            ? "Sign Up"
+            : "Sign In"}
         </Button>
+
+        <button
+          className="text-sm text-muted-foreground hover:underline"
+          type="button"
+          onClick={() => setIsSigningUp((prev) => !prev)}
+        >
+          {isSigningUp
+            ? "Already have an account? Sign in"
+            : "Don't have an account? Sign up"}
+        </button>
       </div>
-    </div>
+    </form>
   );
 }

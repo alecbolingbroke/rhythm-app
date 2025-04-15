@@ -29,18 +29,33 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-64 p-4">
-            <SheetHeader>
-              <SheetTitle className="text-lg font-bold">Rhythm</SheetTitle>
+          <SheetContent
+            side="left"
+            className="w-64 p-6 bg-background text-foreground border-r border-border shadow-md sm:rounded-r-xl"
+          >
+            <SheetHeader className="items-center">
+              <SheetTitle className="text-xl font-bold tracking-tight">
+                Rhythm 🏃‍♂️
+              </SheetTitle>
             </SheetHeader>
-            <nav className="mt-6 space-y-2">
-              <a href="/" className="block hover:underline">
-                Dashboard
+
+            <nav className="space-y-4 text-left">
+              <a
+                href="/tasks"
+                className="block px-2 py-1 rounded hover:bg-muted transition-colors"
+              >
+                Tasks
+              </a>
+              <a
+                href="/calendar"
+                className="block px-2 py-1 rounded hover:bg-muted transition-colors"
+              >
+                Calendar
               </a>
               <Button
                 variant="destructive"
                 onClick={handleLogout}
-                className="w-full mt-4"
+                className="w-full mt-6"
               >
                 Sign Out
               </Button>
@@ -48,7 +63,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </SheetContent>
         </Sheet>
 
-        <h1 className="text-xl font-bold">Rhythm Dashboard</h1>
+        <h1 className="text-xl font-bold">Rhythm 🏃‍♂️</h1>
       </header>
 
       {/* Main content */}

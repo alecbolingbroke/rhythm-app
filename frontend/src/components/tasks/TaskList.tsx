@@ -1,5 +1,5 @@
 import TaskItem from "@/components/tasks/TaskItem";
-import { Task, useTasks } from "@/hooks/useTasks";
+import { Task } from "@/hooks/useTasks";
 import { toast } from "sonner";
 import supabase from "@/lib/supabaseClient";
 import { CalendarClock, ChevronDown, ChevronRight, Clock } from "lucide-react";
@@ -16,6 +16,7 @@ import {
 } from "date-fns";
 import TaskRow from "@/components/tasks/TaskRow";
 import { sortByDueDateAsc } from "@/lib/functions/sort/sortByDueDateAsc";
+import { useTasksContext } from "@/context/tasksProvider";
 
 const headerColorClasses = {
   overdue: "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50",
@@ -31,10 +32,13 @@ const headerColorClasses = {
 
 export default function TaskList({
   filter,
+  searchQuery = "",
 }: {
   filter: "pending" | "completed" | "all";
+  searchQuery?: string;
 }) {
-  const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
+  const { tasks, loading, createTask, updateTask, deleteTask } =
+    useTasksContext();
   // const inputRef = useRef<HTMLInputElement | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
   const [description, setDescription] = useState("");
@@ -61,12 +65,43 @@ export default function TaskList({
     (value) => value === true
   );
 
-  // First filter tasks based on completion status
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "all") return true;
-    if (filter === "pending") return !task.is_complete;
-    if (filter === "completed") return task.is_complete;
-  });
+  // // First filter tasks based on completion status
+  // const filteredTasks = tasks.filter((task) => {
+  //   if (filter === "all") return true;
+  //   if (filter === "pending") return !task.is_complete;
+  //   if (filter === "completed") return task.is_complete;
+  // });
+
+  // // Then filter tasks based on search query
+  // const lowerQuery = searchQuery.toLowerCase().trim();
+
+  // const searchedTasks = filteredTasks.filter((task) => {
+  //   return (
+  //     task.title.toLowerCase().includes(lowerQuery) ||
+  //     task.description?.toLowerCase().includes(lowerQuery) ||
+  //     task.due_date?.toLowerCase().includes(lowerQuery)
+  //   );
+  // });
+
+  const normalizedQuery = searchQuery.toLowerCase().trim();
+
+  const filteredAndSearchedTasks = tasks
+    .filter((task) => {
+      // Completion status filter
+      if (filter === "pending") return !task.is_complete;
+      if (filter === "completed") return task.is_complete;
+      return true; // all
+    })
+    .filter((task) => {
+      // Search filter
+      if (!normalizedQuery) return true;
+
+      return (
+        task.title.toLowerCase().includes(normalizedQuery) ||
+        task.description?.toLowerCase().includes(normalizedQuery) ||
+        task.due_date?.toLowerCase().includes(normalizedQuery)
+      );
+    });
 
   // Group tasks by due date categories
   const categorizeTasksByDueDate = (tasks: Task[]) => {
@@ -119,11 +154,11 @@ export default function TaskList({
       dueTomorrow: sortByDueDateAsc(dueTomorrow),
       dueThisWeek: sortByDueDateAsc(dueThisWeek),
       later: sortByDueDateAsc(later),
-      noDueDate: noDueDate
+      noDueDate: noDueDate,
     };
   };
 
-  const categorizedTasks = categorizeTasksByDueDate(filteredTasks);
+  const categorizedTasks = categorizeTasksByDueDate(filteredAndSearchedTasks);
 
   // Function to toggle section expansion
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -208,16 +243,24 @@ export default function TaskList({
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading tasks...</p>
-      ) : filteredTasks.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No tasks to show.</p>
+      ) : filteredAndSearchedTasks.length === 0 ? (
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="text-sm text-muted-foreground text-center mt-10 animate-bounce-slow"
+        >
+          Looks like your list is clear — working hard or hardly working? 🧘‍♂️
+        </motion.p>
       ) : (
         <div className="space-y-6">
           {/* Expand/Collapse All Toggle */}
-          {filteredTasks.length > 0 && (
+          {filteredAndSearchedTasks.length > 0 && (
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs text-muted-foreground">
-                {filteredTasks.length}{" "}
-                {filteredTasks.length === 1 ? "task" : "tasks"}{" "}
+                {filteredAndSearchedTasks.length}{" "}
+                {filteredAndSearchedTasks.length === 1 ? "task" : "tasks"}{" "}
                 {filter !== "all" ? `(${filter})` : ""}
               </span>
               <Button
