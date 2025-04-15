@@ -23,3 +23,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RHYTHM_FRONTEND }}
           channelId: live
           projectId: rhythm-frontend
+          entryPoint: ./frontend
