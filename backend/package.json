@@ -5,7 +5,7 @@
 		"watch": "tsc -w",
 		"build": "tsc",
 		"start": "node dist/server.js",
-		"dev": "nodemon dist/server.js"
+		"dev": "nodemon server.ts"
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.49.4",
@@ -13,6 +13,7 @@
 		"dotenv": "^16.4.7",
 		"express": "^5.1.0",
 		"jsonwebtoken": "^9.0.2",
+		"openai": "^4.94.0",
 		"postgres": "^3.4.5"
 	},
 	"devDependencies": {
@@ -23,7 +24,5 @@
 		"nodemon": "^3.1.9",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.3"
-
-		
 	}
 }

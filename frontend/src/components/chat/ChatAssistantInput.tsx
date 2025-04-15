@@ -3,10 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUser } from "@/hooks/useUser";
 
 export default function ChatAssistantInput() {
   const [message, setMessage] = useState("");
   const [activePromptIndex, setActivePromptIndex] = useState(0);
+  const [chat, setChat] = useState<string[]>([]);
+
+  const { session } = useUser();
+
+  const API_URL =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:4000"
+      : import.meta.env.VITE_API_URL;
 
   const promptSuggestions = useMemo(
     () => [
@@ -57,10 +66,51 @@ export default function ChatAssistantInput() {
       setMessage(randomPrompt);
     }
   };
-
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
-    // send to backend or handle as needed
+
+    setChat((prev) => [...prev, `🧑‍💻 You: ${message}`]);
+
+    try {
+      const token = session?.access_token;
+      const response = await fetch(`${API_URL}/api/assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ prompt: message }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      let botMessage = "";
+      if (data.message) {
+        botMessage = data.message;
+      } else if (data.task) {
+        botMessage = `✅ Added task: ${data.task.title}`;
+        if (data.task.due_date) {
+          botMessage += ` (due: ${new Date(
+            data.task.due_date
+          ).toLocaleString()})`;
+        }
+      } else {
+        throw new Error("Unexpected response format");
+      }
+
+      setChat((prev) => [...prev, `🤖 PaceMaker: ${botMessage}`]);
+    } catch (error) {
+      console.error("Error:", error);
+      setChat((prev) => [
+        ...prev,
+        "❌ Something went wrong. Please try again later.",
+      ]);
+    }
+
     setMessage("");
   };
 
@@ -89,10 +139,22 @@ export default function ChatAssistantInput() {
             Welcome to PaceMaker
           </h1>
           <p className="text-muted-foreground text-sm">
-            Feeling productive? Me neither. Ask for a pep talk or weirdly
+            Feeling productive? Me neither. Ask for a pep talk or oddly specific
             specific task to keep you going.
           </p>
         </motion.div>
+      </div>
+      <div className="mb-4 space-y-2 text-sm">
+        {chat.map((line, i) => (
+          <motion.p
+            key={i}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {line}
+          </motion.p>
+        ))}
       </div>
 
       <div className="text-xs text-muted-foreground mb-2 flex flex-wrap gap-2">
