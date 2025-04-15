@@ -48,7 +48,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </SheetContent>
         </Sheet>
 
-        <h1 className="text-xl font-bold">Rhythm</h1>
+        <h1 className="text-xl font-bold">🏃‍♂️</h1>
       </header>
 
       {/* Main content */}
