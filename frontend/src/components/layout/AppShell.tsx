@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import supabase from "../../lib/supabaseClient";
+import {Link} from "react-router-dom";
+
+
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -22,9 +25,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="w-full flex items-center justify-between p-4 border-b bg-muted">
-        {/* Title */}
-        <h1 className="text-xl font-bold">Rhythm 🏃‍♂️</h1>
-
+        {/* Logo */}
+        <nav className="text-xl font-bold">
+          <Link to="/" className="hover:underline transition">
+            Rhythm 🏃‍♂️
+          </Link>
+        </nav>
         {/* Sheet */}
         <Sheet>
           <SheetTrigger asChild>
