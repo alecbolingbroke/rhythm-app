@@ -8,12 +8,29 @@ import assistantRoutes from "./routes/assistantRoutes";
 import { authMiddleware } from "./middleware/authMiddleware";
 
 const app = express();
+
+// Update CORS configuration to handle multiple origins
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://rhythm-frontend.web.app', 
+  'http://localhost:5173',          
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
 app.use(express.json());
 
 
