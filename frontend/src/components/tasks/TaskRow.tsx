@@ -89,11 +89,11 @@ export default function TaskRow({
     >
       <div>
         {isTodayTask && task.due_date && (
-          <DueBadge icon={Clock} text={formatTimeForDisplay(task.due_date)} />
+          <DueBadge icon={Clock} text={`Today at ${formatTimeForDisplay(task.due_date)}`}/>
         )}
 
         {isTomorrowTask && task.due_date && (
-          <DueBadge icon={Clock} text={formatTimeForDisplay(task.due_date)} />
+          <DueBadge icon={Clock} text={`Tomorrow at ${formatTimeForDisplay(task.due_date)}`} />
         )}
 
         {isThisWeekTask && task.due_date && (

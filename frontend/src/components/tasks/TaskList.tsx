@@ -258,7 +258,7 @@ export default function TaskList({
                 ) : (
                   <ChevronRight className="h-4 w-4 text-zinc-900 dark:text-zinc-50 transition-transform" />
                 )}
-                <Clock className="h-4 w-4 text-zinc-900 dark:text-zinc-50" />
+                <CalendarClock className="h-4 w-4 text-zinc-900 dark:text-zinc-50" />
                 <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                   Overdue
                 </h3>
