@@ -224,7 +224,7 @@ export default function TaskItem({
       {...(!isNew && { whileHover: "hover" })}
     >
       {/* Row 1: Checkbox, Title, Delete */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 group">
         <motion.div
           whileTap={{ scale: isNew ? 1 : 0.9 }}
           animate={{
@@ -275,13 +275,16 @@ export default function TaskItem({
         {onDelete && (
           <button
             onClick={onDelete}
-            className="opacity-0 group-hover:opacity-100 transition-all p-1 rounded
-                     bg-white group-hover:bg-white hover:bg-red-500 z-20"
+            className={cn(
+              "transition-all p-1 rounded z-20",
+              "opacity-100 sm:opacity-0 sm:group-hover:opacity-100",
+              "bg-white sm:group-hover:bg-white sm:hover:bg-red-500"
+            )}
             aria-label="Delete task"
           >
             <Trash2
               size={16}
-              className="transition-colors text-red-500 group-hover:text-red-500 hover:text-white"
+              className="text-red-500 sm:hover:text-white transition-colors"
             />
           </button>
         )}
@@ -368,7 +371,6 @@ export default function TaskItem({
                     ? dateObject.toISOString()
                     : "";
 
-
                   onSave({
                     title: currentTitle,
                     description: currentDescription,
@@ -377,7 +379,6 @@ export default function TaskItem({
                   });
 
                   toast.success(isNew ? "Task created!" : "Changes saved.");
-
 
                   if (!isNew) setIsEditing(false);
                 }}

@@ -88,6 +88,7 @@ export default function TaskRow({
       layout={false}
     >
       <div>
+        <div className="hidden sm:block">
         {isTodayTask && task.due_date && (
           <DueBadge icon={Clock} text={`Today at ${formatTimeForDisplay(task.due_date)}`}/>
         )}
@@ -116,6 +117,7 @@ export default function TaskRow({
             text={formatDateTimeForDisplay(task.due_date)}
           />
         )}
+        </div>
 
         <TaskItem
           id={task.id}
