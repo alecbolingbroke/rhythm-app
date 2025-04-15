@@ -7,7 +7,7 @@ import LandingPage from "../pages/LandingPage";
 import CalendarPage from "../pages/CalendarPage";
 import TasksPage from "../pages/TasksPage";
 import { TasksProvider } from "@/context/tasksProvider";
-import ChatAssistantInput from "@/components/chat/ChatAssistantInput";
+import ChatPage from "@/pages/ChatPage";
 
 export default function AppRouter() {
   return (
@@ -49,7 +49,7 @@ export default function AppRouter() {
           <ProtectedRoute>
             <TasksProvider>
               <AppShell>
-                <ChatAssistantInput />
+                <ChatPage />
               </AppShell>
             </TasksProvider>
           </ProtectedRoute>

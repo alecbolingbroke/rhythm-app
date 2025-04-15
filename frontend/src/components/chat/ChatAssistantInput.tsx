@@ -37,11 +37,13 @@ export default function ChatAssistantInput() {
       ) {
         e.preventDefault();
         const randomPrompt =
-          promptSuggestions[Math.floor(Math.random() * promptSuggestions.length)];
+          promptSuggestions[
+            Math.floor(Math.random() * promptSuggestions.length)
+          ];
         setMessage(randomPrompt);
       }
     };
-  
+
     window.addEventListener("keydown", handleGlobalSpace);
     return () => window.removeEventListener("keydown", handleGlobalSpace);
   }, [message, promptSuggestions]);
@@ -65,15 +67,32 @@ export default function ChatAssistantInput() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)] max-w-2xl mx-auto w-full px-4 py-6">
       <div className="flex-1 flex items-center justify-center text-center">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">
-            🫀 Welcome to PaceMaker
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="space-y-2"
+        >
+          <h1 className="text-3xl font-bold text-foreground flex items-center justify-center gap-2">
+            <motion.span
+              animate={{
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              🫀
+            </motion.span>
+            Welcome to PaceMaker
           </h1>
           <p className="text-muted-foreground text-sm">
             Feeling productive? Me neither. Ask for a pep talk or weirdly
             specific task to keep you going.
           </p>
-        </div>
+        </motion.div>
       </div>
 
       <div className="text-xs text-muted-foreground mb-2 flex flex-wrap gap-2">

@@ -21,8 +21,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      {/* Topbar with Popout Trigger */}
       <header className="w-full flex items-center justify-between p-4 border-b bg-muted">
+        {/* Title */}
+        <h1 className="text-xl font-bold">Rhythm 🏃‍♂️</h1>
+
+        {/* Sheet */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -30,8 +33,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
             </Button>
           </SheetTrigger>
           <SheetContent
-            side="left"
-            className="w-64 p-6 bg-background text-foreground border-r border-border shadow-md sm:rounded-r-xl"
+            side="right"
+            className="w-64 p-6 bg-background text-foreground border-l border-border shadow-md sm:rounded-l-xl"
           >
             <SheetHeader className="items-center">
               <SheetTitle className="text-xl font-bold tracking-tight">
@@ -52,6 +55,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
               >
                 Calendar
               </a>
+              <a
+                href="/chat"
+                className="block px-2 py-1 rounded hover:bg-muted transition-colors"
+              >
+                Chat
+              </a>
               <Button
                 variant="destructive"
                 onClick={handleLogout}
@@ -62,8 +71,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
             </nav>
           </SheetContent>
         </Sheet>
-
-        <h1 className="text-xl font-bold">Rhythm 🏃‍♂️</h1>
       </header>
 
       {/* Main content */}

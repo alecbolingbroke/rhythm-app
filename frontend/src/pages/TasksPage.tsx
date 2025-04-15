@@ -25,6 +25,7 @@ export default function TasksPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const [showHello, setShowHello] = useState(false);
+  const { tasks } = useTasksContext();
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
@@ -164,7 +165,7 @@ export default function TasksPage() {
 
             {/* Tracker only on desktop */}
             <div className="hidden lg:block mt-10 lg:mt-0">
-              <TaskTracker tasks={useTasksContext().tasks} />
+              <TaskTracker tasks={tasks} />
             </div>
           </motion.div>
         )}
