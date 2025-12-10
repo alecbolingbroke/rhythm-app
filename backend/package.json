@@ -5,7 +5,8 @@
 		"watch": "tsc -w",
 		"build": "tsc",
 		"start": "node dist/server.js",
-		"dev": "nodemon server.ts"
+		"dev": "nodemon server.ts",
+		"vercel-build": "npm run build"
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.49.4",
